@@ -36,13 +36,17 @@ class Traversal {
 
   calculateMoves (targetX = 0, targetY = 0) {
     const viableMoves = []
-    for (let i = 0; i < this.xDir.length && i < this.yDir.length; i++) {
-      viableMoves.push([this.xDir[i], this.yDir[i]])
+    function findViableMoves () {
+      for (let i = 0; i < this.xDir.length && i < this.yDir.length; i++) {
+        viableMoves.push([this.xDir[i], this.yDir[i]])
+      }
     }
     const visited = new Set()
     const queue = [[0, 0]]
     const steps = 0
-    return viableMoves
+    while (queue.length === 0) {
+      queue.push(viableMoves.shift())
+    }
   }
 }
 
