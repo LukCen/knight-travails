@@ -12,12 +12,6 @@ class Traversal {
     this.yDir = [2, 2, -2, -2, 1, -1, 1, -1] // UP-DOWN
   }
 
-  movement (x, y) {
-    const moves = 0
-    const queue = []
-    queue.push(new Traversal(0, 0))
-  }
-
   /**
      *
      * @param {Number} x - coords of the knight
@@ -36,17 +30,24 @@ class Traversal {
 
   calculateMoves (targetX = 0, targetY = 0) {
     const viableMoves = []
-    function findViableMoves () {
-      for (let i = 0; i < this.xDir.length && i < this.yDir.length; i++) {
-        viableMoves.push([this.xDir[i], this.yDir[i]])
-      }
+    const queue = []
+    for (let i = 0; i < this.xDir.length && i < this.yDir.length; i++) {
+      viableMoves.push([(this.x + this.xDir[i]), (this.y + this.yDir[i])]) // this will correctly calculate viable moves I think? sure seems to work in the console
     }
+
     const visited = new Set()
-    const queue = [[0, 0]]
     const steps = 0
-    while (queue.length === 0) {
-      queue.push(viableMoves.shift())
-    }
+    queue.push(...viableMoves)
+    this.x = queue.shift()[0]
+    this.y = queue.shift()[1]
+    // while (queue.length === 0) {
+    //   if (this.x === targetX && this.y === targetY) { // means knight has reached his destination
+    //     return steps
+    //   } else {
+    //   }
+    // }
+    // console.log(queue)
+    // console.log(viableMoves)
   }
 }
 
@@ -59,7 +60,8 @@ class Traversal {
  * 4b) if not, ...?
  */
 
-const test = new Traversal(0, 0)
-console.log(test.xDir[0])
-console.log(test.showAllPossible(4, 4))
+const test = new Traversal(1, 1)
+// console.log(test.xDir[0])
+// console.log(test.showAllPossible(4, 4))
 console.log(test.calculateMoves())
+console.log([test.x, test.y])
