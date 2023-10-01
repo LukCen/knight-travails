@@ -20,7 +20,7 @@ class Traversal {
     const viableMoves = []
     let queue = [[0, 0]]
     const visited = new Set()
-    let steps = 0
+    let steps = 0 // holds the minimal amount of moves to reach the target
     for (let i = 0; i < this.xDir.length && i < this.yDir.length; i++) {
       viableMoves.push([(this.x + this.xDir[i]), (this.y + this.yDir[i])]) // this will correctly calculate viable moves I think? sure seems to work in the console
     }
@@ -31,14 +31,13 @@ class Traversal {
         const current = queue.shift()
         const currentX = current[0] // extract current position from the queue
         const currentY = current[1] // extract current position from the queue
-        console.log(`X: ${currentX} | Y: ${currentY}`)
 
         if (currentX === targetX && currentY === targetY) { // we've found our goal if this is truthy
           return steps
         }
         for (const d of viableMoves) { // is this even needed in this loop? will investigate later
           const nextX = currentX + d[0]
-          const nextY = currentY + d[0]
+          const nextY = currentY + d[1]
 
           if (!visited.has(`${nextX},${nextY}`)) { // this entire part might have to be rewritten, I barely understand wtf this is
             visited.add(`${nextX},${nextY}`)
@@ -51,11 +50,3 @@ class Traversal {
     }
   }
 }
-
-const test = new Traversal(0, 0)
-
-console.log(test.calculateMoves(8, 8)) // these values cause an infinite loop. I think I need to visit all the neighbouring nodes to the one I'm currently at?
-
-/**
- * I think I'll experiment with keeping an eye of the current position, and if it's values are higher than the target... end the loop i guess? Re-run it with different parameters?
-*/
