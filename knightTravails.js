@@ -1,52 +1,41 @@
 'use strict'
+
 class Traversal {
-  /**
-     * @param {Number} x - x coordinate of the knight
-     * @param {Number} y - y coordinate of the knight
-     */
+  static dir = [[-1, 2], [1, 2], [-1, -2], [1, -2], [-2, 1], [-2, -1], [2, 1], [2, -1]]
+
   constructor (x, y) {
     this.x = x
     this.y = y
-    this.xDir = [-1, 1, -1, 1, -2, -2, 2, 2] // LEFT-RIGHT
-    this.yDir = [2, 2, -2, -2, 1, -1, 1, -1] // UP-DOWN
   }
-  /**
-  * @param {Number} targetX - searched coordinate on the X axis
-  * @param {Number} targetY - searched coordinate on the Y axis
-  * @returns {Number} number of moves it takes to reach the target
-  */
 
-  calculateMoves (targetX = 0, targetY = 0) {
-    const viableMoves = []
-    let queue = [[0, 0]]
-    const visited = new Set()
-    let steps = 0 // holds the minimal amount of moves to reach the target
-    for (let i = 0; i < this.xDir.length && i < this.yDir.length; i++) {
-      viableMoves.push([(this.x + this.xDir[i]), (this.y + this.yDir[i])]) // this will correctly calculate viable moves I think? sure seems to work in the console
-    }
-    queue = [...viableMoves] // populate the queue with moves the knight can make at this moment
-    while (queue.length) {
-      const next = []
-      while (queue.length) {
-        const current = queue.shift()
-        const currentX = current[0] // extract current position from the queue
-        const currentY = current[1] // extract current position from the queue
+  calculateMoves (targetX, targetY) {
+    let steps = 0
+    const target = `${targetX},${targetY}`
+    let queue = [[this.x, this.y]] // initiate queue with current position
+    const visited = new Map().set(`${this.x},${this.y}`, null) // create a map of keys (array of values) and values (current location for each value) - start with values being null
+    while (queue.length) { // check if queue is empty
+      if (visited.has(target)) { // if this is true, it means we have reached our goal
+        // reconstruct the path
+        let point = [targetX, targetY]
+        const path = []
 
-        if (currentX === targetX && currentY === targetY) { // we've found our goal if this is truthy
-          return steps
+        while (point) {
+          path.push(point)
+          point = visited.get(point.join(','))
         }
-        for (const d of viableMoves) { // is this even needed in this loop? will investigate later
-          const nextX = currentX + d[0]
-          const nextY = currentY + d[1]
-
-          if (!visited.has(`${nextX},${nextY}`)) { // this entire part might have to be rewritten, I barely understand wtf this is
-            visited.add(`${nextX},${nextY}`)
-            next.push([nextX, nextY])
-          }
-        }
+        const showPath = JSON.stringify(path.reverse())
+        return `Your amount of steps: ${steps}, your path: ${JSON.parse(JSON.stringify(showPath))}` // this took way more work than I want to admit
       }
-      steps++
+      const next = []
+      for (const [currentX, currentY] of queue) { // take each element of the 'queue' array
+        const viableMoves = Traversal.dir.map(([dx, dy]) => [currentX + dx, currentY + dy]).filter(([x, y]) => x >= 0 && y >= 0 && !visited.has(`${x},${y}`) && visited.set(`${x},${y}`, [currentX, currentY]))
+        next.push(...viableMoves)
+      }
       queue = next
+      steps++
     }
   }
 }
+
+const test = new Traversal(0, 0)
+console.log(test.calculateMoves(8, 8))
